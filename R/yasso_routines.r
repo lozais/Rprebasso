@@ -493,8 +493,6 @@ sCststPrebasOut <- function(x){
     return(soilStSt)
 }
 
-
-####Wrapper function for YASSO runs (fortran version) with PREBAS inputs
 ####Wrapper function for YASSO runs (fortran version) with PREBAS inputs
 yassoPREBASin <- function(litter,species,initSoilC,weatherYasso,climIDs,pYASSO = pYAS,litterSize = NA,pAWEN=parsAWEN){
   ###litter is array with dimensions:(nSites, nYears, nLayers, 3) !!!fourth dimension (3) 1 is fine litter, 2 = branch litter, 3=stemLitter
@@ -536,3 +534,84 @@ yassoPREBASin <- function(litter,species,initSoilC,weatherYasso,climIDs,pYASSO =
   )
   return(xx)
 }
+
+
+
+###multiPrebas out returns steady state by site
+StYas <- function(PrebOut,siteX="all"){
+  if(siteX == "all"){
+    nSites <- dim(PrebOut$multiOut)[1]
+    nLayers <- dim(PrebOut$multiOut)[4]
+    soilC <- list()
+    for(siteN in 1:nSites){
+      speciesSite <- PrebOut$multiOut[siteN,1,4,,1]
+      # print(siteN)
+      for(i in 1:nLayers){
+        Lx = PrebOut$multiOut[siteN, , c(1,3,4, 26:29), i, 1]
+        if(i==1){
+          L <- apply(Lx,2,mean)
+        }else{
+          L <- rbind(L,apply(Lx,2,mean))
+        }
+      }
+      if(nLayers==1){
+        L = setDT(as.list(L))[]
+      }else{
+        L <- data.table(L)
+      }
+      
+      # L = L[, .(sum(Litter_fol + Litter_fr),
+      # sum(Litter_branch), sum(Litter_wood)), by=.(sitetype, species)]
+      L = L[, .(mean(Litter_fol + Litter_fr), mean(Litter_branch),
+                mean(Litter_wood)), by=species][species!=0]
+      if(nLayers==1){
+        L = data.table(matrix(c(unlist(L[,2:4]), litterSizeDef[,speciesSite],rep( speciesSite,3)),3,3))
+      }else{
+        L = cbind(L, litterSizeDef[,speciesSite], speciesSite)[, -1]
+      }
+      
+      
+      S = soilCstst(L, 
+                    as.numeric(mean(PrebOut$weatherYasso[1,,1])),
+                    as.numeric(mean(PrebOut$weatherYasso[1,,3])),
+                    as.numeric(mean(PrebOut$weatherYasso[1,,2])),
+                    species = 1:3)
+      soilC[[siteN]] <- S
+    }
+  }else{
+    siteN=siteX
+    speciesSite <- PrebOut$multiOut[siteN,1,4,,1]
+    # print(siteN)
+    for(i in 1:nLayers){
+      Lx = PrebOut$multiOut[siteN, , c(1,3,4, 26:29), i, 1]
+      if(i==1){
+        L <- apply(Lx,2,mean)
+      }else{
+        L <- rbind(L,apply(Lx,2,mean))
+      }
+    }
+    if(nLayers==1){
+      L = setDT(as.list(L))[]
+    }else{
+      L <- data.table(L)
+    }
+    
+    # L = L[, .(sum(Litter_fol + Litter_fr),
+    # sum(Litter_branch), sum(Litter_wood)), by=.(sitetype, species)]
+    L = L[, .(mean(Litter_fol + Litter_fr), mean(Litter_branch),
+              mean(Litter_wood)), by=species][species!=0]
+    if(nLayers==1){
+      L = data.table(matrix(c(unlist(L[,2:4]), litterSizeDef[,speciesSite],rep( speciesSite,3)),3,3))
+    }else{
+      L = cbind(L, litterSizeDef[,speciesSite], speciesSite)[, -1]
+    }
+    S = soilCstst(L, 
+                  as.numeric(mean(PrebOut$weatherYasso[1,,1])),
+                  as.numeric(mean(PrebOut$weatherYasso[1,,3])),
+                  as.numeric(mean(PrebOut$weatherYasso[1,,2])),
+                  species = 1:3)
+    soilC <- S
+  }
+  return(soilC)
+}
+

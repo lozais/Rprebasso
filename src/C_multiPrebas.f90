@@ -7,7 +7,8 @@ subroutine multiPrebas(multiOut,nSites,nClimID,nLayers,maxYears,maxThin, &
 		nThinning,fAPAR,initClearcut,fixBAinitClarcut,initCLcutRatio,ETSy,P0y, initVar,&
 		weatherPRELES,DOY,pPRELES,etmodel, soilCinOut,pYasso,&
 		pAWEN,weatherYasso,litterSize,soilCtotInOut, &
-		defaultThin,ClCut,energyCuts,inDclct,inAclct,dailyPRELES,yassoRun,multiEnergyWood,tapioPars) !!energCut
+		defaultThin,ClCut,energyCuts,inDclct,inAclct,dailyPRELES,yassoRun,multiEnergyWood,tapioPars,&
+		GVout,GVrun) !!energCut
 
 implicit none
 
@@ -26,9 +27,11 @@ integer, intent(in) :: nYears(nSites),nLayers(nSites)
 ! real (kind=8), intent(in) :: pSp1(npar),pSp2(npar),pSp3(npar)!,par_common
  real (kind=8), intent(in) :: defaultThin(nSites),ClCut(nSites),yassoRun(nSites)
  real (kind=8), intent(in) :: inDclct(nSites,allSP),inAclct(nSites,allSP),energyCuts(nSites)	!!energCuts
-! integer, intent(in) :: siteThinning(nSites)
+!!!ground vegetation
+ integer, intent(in) :: gvRun			!!!ground vegetation
+ real (kind=8), intent(inout) :: GVout(nSites,maxYears,4) !fAPAR_gv,litGV,photoGV,respGV			!!!ground vegetation
  integer, intent(inout) :: nThinning(nSites)
- real (kind=8), intent(out) :: fAPAR(nSites,maxYears)
+ real (kind=8), intent(inout) :: fAPAR(nSites,maxYears)
  real (kind=8), intent(inout) :: initVar(nSites,7,maxNlayers),P0y(nClimID,maxYears,2),ETSy(nClimID,maxYears)!,par_common
  real (kind=8), intent(inout) :: multiOut(nSites,maxYears,nVar,maxNlayers,2)
  real (kind=8), intent(inout) :: multiEnergyWood(nSites,maxYears,maxNlayers,2)!!energCuts
@@ -73,7 +76,7 @@ do i = 1,nSites
 		litterSize,soilCtot(i,1:nYears(i)),defaultThinX,&
 		ClCutX,energyCuts(i),inDclct(i,:),inAclct(i,:),dailyPRELES(i,1:(nYears(i)*365),:),yassoRun(i),&
 		multiEnergyWood(i,1:nYears(i),1:nLayers(i),:), &
-		tapioPars) !energyCut)
+		tapioPars,GVout(i,1:nYears(i),:),GVrun) !energyCut)
 
 		multiOut(i,1:nYears(i),:,1:nLayers(i),:) = output(1:nYears(i),:,1:nLayers(i),:)
 end do

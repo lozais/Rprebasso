@@ -1,11 +1,10 @@
-
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !subroutine bridging
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 subroutine prebas(nYears,nLayers,nSp,siteInfo,pCrobas,initVar,thinning,output,nThinning,maxYearSite,fAPAR,initClearcut,&
-		fixBAinitClarcut,initCLcutRatio,ETSy,P0y,weatherPRELES,DOY,pPRELES,etmodel, soilCinOut,pYasso,pAWEN,weatherYasso,&
-		litterSize,soilCtotInOut,&
-		defaultThin,ClCut,energyCut,inDclct,inAclct,dailyPRELES,yassoRun,energyWood,tapioPars) !energyCut
+		fixBAinitClarcut,initCLcutRatio,ETSy,P0y,weatherPRELES,DOY,pPRELES,etmodel, soilCinOut,&
+		pYasso,pAWEN,weatherYasso,litterSize,soilCtotInOut,&
+		defaultThin,ClCut,energyCut,inDclct,inAclct,dailyPRELES,yassoRun,energyWood,tapioPars,GVout,GVrun) 
 
 implicit none
 
@@ -26,7 +25,9 @@ implicit none
  real (kind=8), intent(in) :: inDclct(nSp),inAclct(nSp)
 ! integer, intent(in) :: siteThinning(nSites)
  integer, intent(inout) :: nThinning
- real (kind=8), intent(out) :: fAPAR(nYears)
+!!!ground vegetation variables
+ integer, intent(in) :: gvRun			!!!ground vegetation
+ real (kind=8), intent(inout) :: fAPAR(nYears),GVout(nYears,4) !fAPAR_gv,litGV,photoGV,respGV			!!!ground vegetation
  real (kind=8), intent(inout) :: dailyPRELES((nYears*365),3)
  real (kind=8), intent(inout) :: initVar(7,nLayers),P0y(nYears,2),ETSy(nYears),initCLcutRatio(nLayers)!
  real (kind=8), intent(inout) :: siteInfo(10)
@@ -84,7 +85,6 @@ implicit none
 !v1 version definitions
  real (kind=8) :: theta,Tdb=10.,f1,f2
  real (kind=8) :: ETSmean, BAtapio(2)
-
   ! open(1,file="test1.txt")
   ! open(2,file="test2.txt")
 
@@ -108,6 +108,7 @@ pars(27) = siteInfo(7) !Sinit
 P0yX = P0y
 Reineke(:) = 0.
 ETSmean = sum(ETSy)/nYears
+!GVout = 0.  !!!ground vegetation
 
  modOut(:,1,:,1) = siteInfo(1)  !! assign siteID 
  ! modOut(1,2,:,1) = initVar(8,:)	!! assign initial gammaC values !!newX
@@ -248,7 +249,6 @@ do year = 1, (nYears)
    enddo	
 	yearX = 0
 	
-	
   endif
 
   stand_all = modOut(year,:,:,1)
@@ -262,7 +262,6 @@ do year = 1, (nYears)
 
   do time = 1, inttimes !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
- ! do ki = 1, nSites
   ! calculate self-thinning using all tree classes
  if(time==inttimes)then
     valX = STAND_all(11,:)
@@ -283,7 +282,7 @@ do year = 1, (nYears)
 	enddo
  endif
 
-do ij = 1 , nLayers 		!loop Species
+do ij = 1, nLayers 		!loop Species
 
  STAND=STAND_all(:,ij)
  species = int(stand(4))
@@ -327,7 +326,6 @@ do ij = 1 , nLayers 		!loop Species
  par_sla0 = param(39)
  par_tsla = param(40)
 
-! do siteNo = 1, nSites  !loop sites
 
 if (year > maxYearSite) then
   STAND(2) = 0. !!newX
@@ -504,13 +502,11 @@ else
   STAND(47:nVar) = 0. !#!#
 endif
 endif
-! end do !!!!!!!end loop sites
 
  STAND_all(:,ij)=STAND
 end do !!!!!!!end loop layers
 
 !!!calculate species weight for photosynthesis
-!do siteNo = 1, nSites
 
 if (year <= maxYearSite) then
 	nSpec = nSp
@@ -520,7 +516,7 @@ if (year <= maxYearSite) then
 		
    STAND_all(36,:) = MeanLight
    STAND_all(23,:) = coeff
-! fAPARsite=0.7
+
    if(fAPARsite == 0. .and. yearX == 0) then
 	if((nYears-year)<10) then
 	 Ainit = nint(6. + 2*sitetype - 0.005*modOut(year,5,1,1) + 2.25)
@@ -531,9 +527,9 @@ if (year <= maxYearSite) then
 !	initClearcut(5) = Ainit
    endif
 
-   fAPARprel(:) = fAPARsite
    fAPAR(year) = fAPARsite
-   
+   fAPARprel(:) = fAPARsite
+      
    call preles(weatherPRELES(year,:,:),DOY,fAPARprel,prelesOut, pars, &
 		dailyPRELES((1+((year-1)*365)):(365*year),1), &  !daily GPP
 		dailyPRELES((1+((year-1)*365)):(365*year),2), &  !daily ET
@@ -551,8 +547,30 @@ if (year <= maxYearSite) then
 
    STAND_all(10,:) = prelesOut(1)/1000. ! Photosynthesis in g C m-2 (converted to kg C m-2)
 
+   
+   !!!ground vegetation
+   !!!fapar_gv compute fapar, biomasses and litter of gv with routine
+   if(gvRun==1) then
+	if(fAPARsite>0.) then
+     call fAPARgv(fAPARsite,ETSmean,siteType,GVout(year,1),GVout(year,2)) !reduced input output
+     GVout(year,3) = prelesOut(1) * GVout(year,1)/fAPARsite! Photosynthesis in g C m-2 (converted to kg C m-2)
+     GVout(year,4) = GVout(year,3)*0.5 !where to put those two variables
+   	 STAND_all(26,1) = STAND_all(26,1) + GVout(year,2)	!add !!!ground vegetation to the 1st layer
+    elseif(fAPARsite==0.) then
+	 call fAPARgv(fAPARsite,ETSmean,siteType,GVout(year,1),GVout(year,2)) !reduced input output
+     fAPARprel(:) = fAPARsite + GVout(year,1)
+    !!!fapar_gv run preles for ground vegetation
+     call preles(weatherPRELES(year,:,:),DOY,fAPARprel,prelesOut, pars, &
+		dailyPRELES((1+((year-1)*365)):(365*year),1), &  !daily GPP
+		dailyPRELES((1+((year-1)*365)):(365*year),2), &  !daily ET
+		dailyPRELES((1+((year-1)*365)):(365*year),3), &  !daily SW
+		etmodel)		!type of ET model
+      GVout(year,3) = prelesOut(1) ! Photosynthesis in g C m-2 
+      GVout(year,4) =  GVout(year,3)*0.5 !where to put those two variables
+	endif
+   endif
+
 endif
-!enddo !! end site loop
 
 do ij = 1 , nLayers
  STAND=STAND_all(:,ij)
@@ -596,8 +614,6 @@ do ij = 1 , nLayers
  par_Cr2 = 0.!param(24)
  par_sla0 = param(39)
  par_tsla = param(40)
-
-! do siteNo = 1, nSites  !start site loop
 
 if (year > maxYearSite) then
   STAND(2) = 0. !!newX
@@ -729,7 +745,7 @@ if (N>0.) then
 			npp = (gpp_sp - Respi_m / 10000.) / (1.+par_c)  !!newX
 			Respi_tot = gpp_sp - npp
 				 ! ! litter fall in the absence of thinning
-      S_fol = S_fol + wf_STKG / par_vf	!foliage litterfall
+	  S_fol = S_fol + wf_STKG / par_vf 	!foliage litterfall 
       S_fr  = S_fr + W_froot / par_vr	!fine root litter
 	  S_branch = S_branch + Wdb/Tdb
 		
@@ -909,6 +925,7 @@ else
   STAND(2) = 0. !!newX
   STAND(8:21) = 0. !#!#
   STAND(23:37) = 0. !#!#
+  if(fAPARsite==0. .and. ij==1) STAND(26) = GVout(year,2)
   STAND(42:44) = 0. !#!#
   STAND(47:nVar) = 0. !#!#
   STAND(7) = STAND(7) + step
