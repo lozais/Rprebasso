@@ -1058,14 +1058,15 @@ end subroutine tapioThin
 !  function to calculate fAPAR of ground vegetation
 !***************************************************************
 ! subroutine fAPARgv(fAPARstand,ets,siteType,agW,bgW,fAPAR_gv,litAG,litBG)
-subroutine fAPARgv(fAPARstand,ets,siteType,totfAPAR_gv,totlitGV) !reduced input output	
+subroutine fAPARgv(fAPARstand,ets,siteType,totfAPAR_gv,totlitGV,p0) !reduced input output	
 	implicit none
-    real (kind=8) :: fAPARstand,ets,siteType, litAG(3), litBG(2)
+    real (kind=8) :: fAPARstand,ets,siteType, litAG(3), litBG(2),p0
 	real (kind=8) :: totfAPAR_gv,totlitGV
 	real (kind=8) :: bgW(2),agW(3), xx(3),lai_gv(3),fAPAR_gv(3)!x_g, x_s, x_m !%cover grass&herbs, shrubs and mosses&lichens
     real (kind=8) :: a_g,a_s,a_m,b_m,alpha_ag(3),beta_ag(3),alpha_bg(2),beta_bg(2),laB(3)
-	real (kind=8) :: turnAG(3),turnBG(2)
+	real (kind=8) :: turnAG(3),turnBG(2),p0ref
  
+ p0ref=1400.0
  !!!set parameters %cover
  if(siteType == 1.) then
   a_g = 1.4; a_s = 0.1; a_m = 0.1; b_m = 0.3
@@ -1104,15 +1105,15 @@ subroutine fAPARgv(fAPARstand,ets,siteType,totfAPAR_gv,totlitGV) !reduced input 
  xx(3) = a_m * (1-fAPARstand) + b_m * fAPARstand
  
  !! calculate biomasses
- agW = alpha_ag * xx ** (beta_ag)*0.5
- bgW = alpha_bg * xx(1:2) ** (beta_bg)*0.5  !!!!0.5 converts DW to carbon
+ agW = P0/p0ref * alpha_ag * xx ** (beta_ag)*0.5
+ bgW = P0/p0ref * alpha_bg * xx(1:2) ** (beta_bg)*0.5  !!!!0.5 converts DW to carbon
 
  !! calculate litterfal
  litAG = agW * turnAG
  litBG = bgW * turnBG
  
  ! !calculate LAI
- lai_gv = agW * laB / 5000
+ lai_gv = agW * laB / 10000 * 0.5   !!!!0.5 converts DW to carbon
   
  fAPAR_gv(1) = (1-fAPARstand) * (1-exp(-0.5*(lai_gv(1))))
  fAPAR_gv(2) = (1-fAPARstand-fAPAR_gv(1)) * (1-exp(-0.5*(lai_gv(2))))

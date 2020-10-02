@@ -42,7 +42,7 @@ real (kind=8), intent(in) :: weatherPRELES(nClimID,maxYears,365,5),minDharv !!en
  real (kind=8) :: output(1,nVar,maxNlayers,2),totBA(nSites), relBA(nSites,maxNlayers),wood(1,maxNlayers,2)
  real (kind=8) :: ClCutX, defaultThinX,maxState(nSites),check(maxYears), thinningX(maxThin,9)
   real (kind=8) :: energyWood, roundWood, energyCutX	!!energCuts
- integer :: maxYearSite = 300,yearX(nSites),Ainit,sitex,ops(1),species
+ integer :: maxYearSite = 500,yearX(nSites),Ainit,sitex,ops(1),species
 
 !!!!initialize run
 ! multiOut = 0.

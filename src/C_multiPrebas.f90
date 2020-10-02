@@ -5,8 +5,8 @@
 subroutine multiPrebas(multiOut,nSites,nClimID,nLayers,maxYears,maxThin, &
 		nYears,thinning,pCrobas,allSP,siteInfo, maxNlayers, &
 		nThinning,fAPAR,initClearcut,fixBAinitClarcut,initCLcutRatio,ETSy,P0y, initVar,&
-		weatherPRELES,DOY,pPRELES,etmodel, soilCinOut,pYasso,&
-		pAWEN,weatherYasso,litterSize,soilCtotInOut, &
+		weatherPRELES,DOY,pPRELES,etmodel, soilC,pYasso,&
+		pAWEN,weatherYasso,litterSize,soilCtot, &
 		defaultThin,ClCut,energyCuts,inDclct,inAclct,dailyPRELES,yassoRun,multiEnergyWood,tapioPars,&
 		GVout,GVrun) !!energCut
 
@@ -35,20 +35,18 @@ integer, intent(in) :: nYears(nSites),nLayers(nSites)
  real (kind=8), intent(inout) :: initVar(nSites,7,maxNlayers),P0y(nClimID,maxYears,2),ETSy(nClimID,maxYears)!,par_common
  real (kind=8), intent(inout) :: multiOut(nSites,maxYears,nVar,maxNlayers,2)
  real (kind=8), intent(inout) :: multiEnergyWood(nSites,maxYears,maxNlayers,2)!!energCuts
- real (kind=8), intent(inout) :: soilCinOut(nSites,maxYears,5,3,maxNlayers),soilCtotInOut(nSites,maxYears) !dimensions = nyears,AWENH,treeOrgans(woody,fineWoody,Foliage),species
- real (kind=8) :: soilC(nSites,maxYears,5,3,maxNlayers),soilCtot(nSites,maxYears) !dimensions = nyears,AWENH,treeOrgans(woody,fineWoody,Foliage),species
+ real (kind=8), intent(inout) :: soilC(nSites,maxYears,5,3,maxNlayers),soilCtot(nSites,maxYears) !dimensions = nyears,AWENH,treeOrgans(woody,fineWoody,Foliage),species
  real (kind=8), intent(in) :: pYasso(35), weatherYasso(nClimID,maxYears,3),litterSize(3,allSP) !litterSize dimensions: treeOrgans,species
  real (kind=8) :: output(maxYears,nVar,maxNlayers,2),totBA(nSites), relBA(nSites,maxNlayers)
  real (kind=8) :: ClCutX, HarvArea,defaultThinX,maxState(nSites),check(maxYears), thinningX(maxThin,9)
- integer :: maxYearSite = 300,yearX(nSites),Ainit,sitex,ops(1),species
-
+ integer :: maxYearSite = 500,yearX(nSites),Ainit,sitex,ops(1),species
 !!!!initialize run
 ! multiOut = 0.
 output = 0.
 yearX = 0.
 multiEnergyWood = 0.
-soilC = soilCinOut
-soilCtot = soilCtotInOut
+! soilC = soilCinOut
+! soilCtot = soilCtotInOut
 
 do i = 1,nSites
  do ijj = 1,nLayers(i)
@@ -77,7 +75,6 @@ do i = 1,nSites
 		ClCutX,energyCuts(i),inDclct(i,:),inAclct(i,:),dailyPRELES(i,1:(nYears(i)*365),:),yassoRun(i),&
 		multiEnergyWood(i,1:nYears(i),1:nLayers(i),:), &
 		tapioPars,GVout(i,1:nYears(i),:),GVrun) !energyCut)
-
 		multiOut(i,1:nYears(i),:,1:nLayers(i),:) = output(1:nYears(i),:,1:nLayers(i),:)
 end do
 end subroutine
