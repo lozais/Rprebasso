@@ -1060,8 +1060,11 @@ endif
      outt(18:23,ij,2) = -999.
      outt(24,ij,2) = STAND_tot(24) - W_branch
      outt(25,ij,2) = STAND_tot(25) - W_froot
-     outt(26:29,ij,2) = -999.
-     outt(30,ij,2) = STAND_tot(30) - V
+    outt(26,ij,2) = S_fol - STAND_tot(26)
+	outt(27,ij,2) = S_fr - STAND_tot(27)
+	outt(28,ij,2) = S_branch - STAND_tot(28)
+	outt(29,ij,2) = S_wood - STAND_tot(29)
+	 outt(30,ij,2) = STAND_tot(30) - V
      outt(31,ij,2) = STAND_tot(31) - W_stem
      outt(32,ij,2) = STAND_tot(32) - W_croot
      outt(33,ij,2) = STAND_tot(33) - wf_STKG
@@ -1141,6 +1144,12 @@ if (ClCut == 1.) then
 	endif
   !energyCut
   
+  !litter from harvested trees
+   outt(26,ij,2) = S_fol - stand_all(26,ij)
+   outt(27,ij,2) = S_fr - stand_all(27,ij)
+   outt(28,ij,2) = S_branch - stand_all(28,ij)
+   outt(29,ij,2) = S_wood - stand_all(29,ij)
+   
    stand_all(2,ij) = 0. !!newX
    stand_all(8:21,ij) = 0.
    stand_all(23:38,ij) = 0.
@@ -1368,7 +1377,10 @@ if(defaultThin == 1.) then
     outt(18:23,ij,2) = -999.
     outt(24,ij,2) = STAND_tot(24) - W_branch
     outt(25,ij,2) = STAND_tot(25) - W_froot
-    outt(26:29,ij,2) = -999.
+    outt(26,ij,2) = S_fol - STAND_tot(26)
+	outt(27,ij,2) = S_fr - STAND_tot(27)
+	outt(28,ij,2) = S_branch - STAND_tot(28)
+	outt(29,ij,2) = S_wood - STAND_tot(29)
     outt(30,ij,2) = STAND_tot(30) - V
     outt(31,ij,2) = STAND_tot(31) - W_stem
     outt(32,ij,2) = Nthd * W_croot/N
