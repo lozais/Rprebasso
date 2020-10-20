@@ -337,7 +337,9 @@ InitMultiSite <- function(nYearsMS,
     smoothETS = smoothETS,
     tapioPars=tapioPars,
     GVrun=as.integer(GVrun),
-    GVout=array(0.,dim = c(nSites,maxYears,4))
+    GVout=array(0.,dim = c(nSites,maxYears,4)),
+    GVbgW=array(0.,dim = c(nSites,maxYears,2)),
+    GVabgW=array(0.,dim = c(nSites,maxYears,3))
   )
   return(multiSiteInit)
 }
@@ -384,7 +386,9 @@ multiPrebas <- function(multiSiteInit){
                      multiEnergyWood = as.array(multiSiteInit$multiEnergyWood),
                      tapioPars = as.array(multiSiteInit$tapioPars),
                      GVout = as.array(multiSiteInit$GVout),
-                     GVrun = as.integer(multiSiteInit$GVrun)
+                     GVrun = as.integer(multiSiteInit$GVrun),
+                     GVbgW = as.array(multiSiteInit$GVbgW),
+                     GVabgW = as.array(multiSiteInit$GVabgW)
                      )
   class(prebas) <- "multiPrebas"
   return(prebas)
@@ -446,7 +450,9 @@ regionPrebas <- function(multiSiteInit,
                      multiEnergyWood = as.array(multiSiteInit$multiEnergyWood),
                      tapioPars = as.array(multiSiteInit$tapioPars),
                      GVout = as.array(multiSiteInit$GVout),
-                     GVrun = as.integer(multiSiteInit$GVrun))
+                     GVrun = as.integer(multiSiteInit$GVrun),
+                     GVbgW = as.array(multiSiteInit$GVbgW),
+                     GVabgW = as.array(multiSiteInit$GVabgW))
   class(prebas) <- "regionPrebas"
   if(prebas$maxNlayers>1){
     rescalVbyArea <- prebas$multiOut[,,37,,1] * prebas$areas

@@ -4,7 +4,8 @@
 subroutine prebas(nYears,nLayers,nSp,siteInfo,pCrobas,initVar,thinning,output,nThinning,maxYearSite,fAPAR,initClearcut,&
 		fixBAinitClarcut,initCLcutRatio,ETSy,P0y,weatherPRELES,DOY,pPRELES,etmodel, soilCinOut,&
 		pYasso,pAWEN,weatherYasso,litterSize,soilCtotInOut,&
-		defaultThin,ClCut,energyCut,inDclct,inAclct,dailyPRELES,yassoRun,energyWood,tapioPars,GVout,GVrun) 
+		defaultThin,ClCut,energyCut,inDclct,inAclct,dailyPRELES,yassoRun,energyWood,tapioPars,&
+		GVout,GVrun,GVbgW,GVabgW) 
 
 implicit none
 
@@ -27,7 +28,7 @@ implicit none
  integer, intent(inout) :: nThinning
 !!!ground vegetation variables
  integer, intent(in) :: gvRun			!!!ground vegetation
- real (kind=8), intent(inout) :: fAPAR(nYears),GVout(nYears,4) !fAPAR_gv,litGV,photoGV,respGV			!!!ground vegetation
+ real (kind=8), intent(inout) :: fAPAR(nYears),GVout(nYears,4),GVbgW(nYears,2),GVabgW(nYears,3) !fAPAR_gv,litGV,photoGV,respGV			!!!ground vegetation
  real (kind=8), intent(inout) :: dailyPRELES((nYears*365),3)
  real (kind=8), intent(inout) :: initVar(7,nLayers),P0y(nYears,2),ETSy(nYears),initCLcutRatio(nLayers)!
  real (kind=8), intent(inout) :: siteInfo(10)
@@ -552,12 +553,14 @@ if (year <= maxYearSite) then
    !!!fapar_gv compute fapar, biomasses and litter of gv with routine
    if(gvRun==1) then
 	if(fAPARsite>0.) then
-     call fAPARgv(fAPARsite,ETSmean,siteType,GVout(year,1),GVout(year,2),sum(P0yX(:,1))/nYears) !reduced input output
+     call fAPARgv(fAPARsite,ETSmean,siteType,GVout(year,1),GVout(year,2),&
+		sum(P0yX(:,1))/nYears,GVbgW(year,:),GVabgW(year,:)) !reduced input output
      GVout(year,3) = prelesOut(1) * GVout(year,1)/fAPARsite! Photosynthesis in g C m-2 (converted to kg C m-2)
      GVout(year,4) = GVout(year,3)*0.5 !where to put those two variables
    	 STAND_all(26,1) = STAND_all(26,1) + GVout(year,2)	!add !!!ground vegetation to the 1st layer
     elseif(fAPARsite==0.) then
-	 call fAPARgv(fAPARsite,ETSmean,siteType,GVout(year,1),GVout(year,2),sum(P0yX(:,1))/nYears) !reduced input output
+	 call fAPARgv(fAPARsite,ETSmean,siteType,GVout(year,1),GVout(year,2),&
+	 sum(P0yX(:,1))/nYears,GVbgW(year,:),GVabgW(year,:)) !reduced input output
      fAPARprel(:) = fAPARsite + GVout(year,1)
     !!!fapar_gv run preles for ground vegetation
      call preles(weatherPRELES(year,:,:),DOY,fAPARprel,prelesOut, pars, &
