@@ -7,7 +7,8 @@ subroutine regionPrebas(siteOrder,HarvLim,minDharv,multiOut,nSites,areas,nClimID
 		nThinning,fAPAR,initClearcut,fixBAinitClarcut,initCLcutRatio,ETSy,P0y, initVar,&
 		weatherPRELES,DOY,pPRELES,etmodel, soilCinOut,pYasso,&
 		pAWEN,weatherYasso,litterSize,soilCtotInOut, &
-		defaultThin,ClCut,energyCuts,inDclct,inAclct,dailyPRELES,yassoRun,multiWood,tapioPars,GVout,GVrun)		!!energCuts
+		defaultThin,ClCut,energyCuts,inDclct,inAclct,dailyPRELES,yassoRun,multiWood,&
+		tapioPars,GVout,GVrun,GVbgW,GVabgW)		!!energCuts
 
 implicit none
 
@@ -29,7 +30,7 @@ real (kind=8), intent(in) :: weatherPRELES(nClimID,maxYears,365,5),minDharv !!en
  real (kind=8), intent(inout) :: energyCuts(nSites)	!!energCuts
 !!!ground vegetation
  integer, intent(in) :: gvRun			!!!ground vegetation
- real (kind=8), intent(inout) :: GVout(nSites,maxYears,4) !fAPAR_gv,litGV,photoGV,respGV			!!!ground vegetation
+ real (kind=8), intent(inout) :: GVout(nSites,maxYears,4),GVbgW(nSites,maxYears,2),GVabgW(nSites,maxYears,3) !fAPAR_gv,litGV,photoGV,respGV			!!!ground vegetation
 ! integer, intent(in) :: siteThinning(nSites)
  integer, intent(inout) :: nThinning(nSites)
  real (kind=8), intent(inout) :: fAPAR(nSites,maxYears)
@@ -147,7 +148,8 @@ do ij = 1,maxYears
 		litterSize,soilCtot(i,ij),&
 		defaultThinX,ClCutX,energyCutX,inDclct(i,:),inAclct(i,:), & !!energCuts
 		dailyPRELES(i,(((ij-1)*365)+1):(ij*365),:),yassoRun(i),wood(1,1:nLayers(i),:),&
-		tapioPars,GVout(i,ij,:),GVrun) !!energCuts
+		tapioPars,GVout(i,ij,:),GVrun,&
+		GVbgW(i,ij,:),GVabgW(i,ij,:)) !energyCut)) !!energCuts
 	
 	! if clearcut occur initialize initVar and age
 	if(sum(output(1,11,1:nLayers(i),1))==0 .and. yearX(i) == 0) then
