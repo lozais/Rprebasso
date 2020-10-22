@@ -1076,15 +1076,15 @@ subroutine fAPARgv(fAPARstand,ets,siteType,totfAPAR_gv,totlitGV,p0,bgW,agW) !red
  elseif(siteType == 3.) then
   a_g = 0.3; a_s = 0.55; a_m = 0.3; b_m = 0.6; b_g = 0.1
  elseif(siteType == 4.) then
-  a_g = 0.1; a_s = 0.55; a_m = 0.6; b_m = 0.8; b_g = 0.05
+  a_g = 0.1; a_s = 0.65; a_m = 0.6; b_m = 0.8; b_g = 0.05
  elseif(siteType >4.5) then
   a_g = 0.05; a_s = 0.9; a_m = 0.6; b_m = 0.8; b_g = 0.
  endif
  
- alpha_ag = (/3152.4,2609.5,1727.8/)
- beta_ag = (/1.107,0.961,0.8097/)
- alpha_bg = (/5016.0,2516.2/)
- beta_bg = (/0.831,0.6873/)
+ alpha_ag = (/3152.4,1390.1,1637.1/)
+ beta_ag = (/1.107,0.9496,0.8289/)
+ alpha_bg = (/5016.0,1278.3/)
+ beta_bg = (/0.831,0.6628/)
  if(ets<700.) then
   alpha_ag(1) = 3627.1
   beta_ag(1) = 0.948
