@@ -1102,7 +1102,7 @@ subroutine fAPARgv(fAPARstand,ets,siteType,totfAPAR_gv,totlitGV,p0,bgW,agW) !red
  else
   xx(1) = a_s * (fAPARstand+0.2) * (log(1/fAPARstand)) **0.5
  endif
- xx(2) = a_g * (1-fAPARstand)
+ xx(2) = a_g * (1-fAPARstand) + b_g
  xx(3) = a_m * (1-fAPARstand) + b_m * fAPARstand
  
  !! calculate biomasses
