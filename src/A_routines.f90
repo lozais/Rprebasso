@@ -1069,21 +1069,21 @@ subroutine fAPARgv(fAPARstand,ets,siteType,totfAPAR_gv,totlitGV,p0) !reduced inp
  p0ref=1400.0
  !!!set parameters %cover
  if(siteType == 1.) then
-  a_g = 1.4; a_s = 0.1; a_m = 0.1; b_m = 0.3
+  a_g = 0.4; a_s = 0.1; a_m = 0.1; b_m = 0.3; b_g = 0.4
  elseif(siteType == 2.) then
-  a_g = 1.2; a_s = 0.3; a_m = 0.1; b_m = 0.4
+  a_g = 0.3; a_s = 0.3; a_m = 0.1; b_m = 0.4; b_g = 0.3
  elseif(siteType == 3.) then
-  a_g = 0.3; a_s = 0.55; a_m = 0.3; b_m = 0.6
+  a_g = 0.3; a_s = 0.55; a_m = 0.3; b_m = 0.6; b_g = 0.1
  elseif(siteType == 4.) then
-  a_g = 0.15; a_s = 0.55; a_m = 0.6; b_m = 0.8
+  a_g = 0.1; a_s = 0.65; a_m = 0.6; b_m = 0.8; b_g = 0.05
  elseif(siteType >4.5) then
-  a_g = 0.05; a_s = 0.9; a_m = 0.6; b_m = 0.8
+  a_g = 0.05; a_s = 0.9; a_m = 0.6; b_m = 0.8; b_g = 0.
  endif
  
- alpha_ag = (/3152.4,2609.5,4482.7/)
- beta_ag = (/1.107,0.961,0.8577/)
- alpha_bg = (/5016.0,2516.2/)
- beta_bg = (/0.831,0.6873/)
+ alpha_ag = (/3152.4,1390.1,1637.1/)
+ beta_ag = (/1.107,0.9496,0.8289/)
+ alpha_bg = (/5016.0,1278.3/)
+ beta_bg = (/0.831,0.6628/)
  if(ets<700.) then
   alpha_ag(1) = 3627.1
   beta_ag(1) = 0.948
@@ -1101,12 +1101,14 @@ subroutine fAPARgv(fAPARstand,ets,siteType,totfAPAR_gv,totlitGV,p0) !reduced inp
  else
   xx(1) = a_s * (fAPARstand+0.2) * (log(1/fAPARstand)) **0.5
  endif
- xx(2) = a_g * (1-fAPARstand)
+ xx(2) = a_g * (1-fAPARstand) + b_g
  xx(3) = a_m * (1-fAPARstand) + b_m * fAPARstand
  
  !! calculate biomasses
- agW = P0/p0ref * alpha_ag * xx ** (beta_ag)*0.5
- bgW = P0/p0ref * alpha_bg * xx(1:2) ** (beta_bg)*0.5  !!!!0.5 converts DW to carbon
+ ! agW = P0/p0ref * alpha_ag * xx ** (beta_ag)*0.5
+ ! bgW = P0/p0ref * alpha_bg * xx(1:2) ** (beta_bg)*0.5  !!!!0.5 converts DW to carbon
+ agW = alpha_ag * xx ** (beta_ag)*0.5
+ bgW = alpha_bg * xx(1:2) ** (beta_bg)*0.5  !!!!0.5 converts DW to carbon
 
  !! calculate litterfal
  litAG = agW * turnAG
@@ -1122,5 +1124,3 @@ subroutine fAPARgv(fAPARstand,ets,siteType,totfAPAR_gv,totlitGV,p0) !reduced inp
  totlitGV = sum(litAG) + sum(litBG)
  
 end subroutine fAPARgv
-
-!*************************************************************
