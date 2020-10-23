@@ -1078,7 +1078,7 @@ subroutine fAPARgv(fAPARstand,ets,siteType,totfAPAR_gv,totlitGV,p0,bgW,agW) !red
  elseif(siteType == 4.) then
   a_g = 0.1; a_s = 0.65; a_m = 0.6; b_m = 0.8; b_g = 0.05
  elseif(siteType >4.5) then
-  a_g = 0.05; a_s = 0.9; a_m = 0.6; b_m = 0.8; b_g = 0.
+  a_g = 0.05; a_s = 0.7; a_m = 0.6; b_m = 0.8; b_g = 0.
  endif
  
  alpha_ag = (/3152.4,1390.1,1637.1/)
@@ -1108,8 +1108,8 @@ subroutine fAPARgv(fAPARstand,ets,siteType,totfAPAR_gv,totlitGV,p0,bgW,agW) !red
  !! calculate biomasses
  ! agW = P0/p0ref * alpha_ag * xx ** (beta_ag)*0.5
  ! bgW = P0/p0ref * alpha_bg * xx(1:2) ** (beta_bg)*0.5  !!!!0.5 converts DW to carbon
- agW = alpha_ag * xx ** (beta_ag)*0.5
- bgW = alpha_bg * xx(1:2) ** (beta_bg)*0.5  !!!!0.5 converts DW to carbon
+ agW = (alpha_ag * xx ** (beta_ag))*0.5
+ bgW = (alpha_bg * xx(1:2) ** (beta_bg))*0.5  !!!!0.5 converts DW to carbon
 
  !! calculate litterfal
  litAG = agW * turnAG
