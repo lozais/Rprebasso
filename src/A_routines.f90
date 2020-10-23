@@ -1077,7 +1077,7 @@ subroutine fAPARgv(fAPARstand,ets,siteType,totfAPAR_gv,totlitGV,p0) !reduced inp
  elseif(siteType == 4.) then
   a_g = 0.1; a_s = 0.65; a_m = 0.6; b_m = 0.8; b_g = 0.05
  elseif(siteType >4.5) then
-  a_g = 0.05; a_s = 0.9; a_m = 0.6; b_m = 0.8; b_g = 0.
+  a_g = 0.05; a_s = 0.7; a_m = 0.6; b_m = 0.8; b_g = 0.
  endif
  
  alpha_ag = (/3152.4,1390.1,1637.1/)
