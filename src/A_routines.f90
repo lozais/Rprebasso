@@ -1063,7 +1063,7 @@ subroutine fAPARgv(fAPARstand,ets,siteType,totfAPAR_gv,totlitGV,p0) !reduced inp
     real (kind=8) :: fAPARstand,ets,siteType, litAG(3), litBG(2),p0
 	real (kind=8) :: totfAPAR_gv,totlitGV
 	real (kind=8) :: bgW(2),agW(3), xx(3),lai_gv(3),fAPAR_gv(3)!x_g, x_s, x_m !%cover grass&herbs, shrubs and mosses&lichens
-    real (kind=8) :: a_g,a_s,a_m,b_m,alpha_ag(3),beta_ag(3),alpha_bg(2),beta_bg(2),laB(3)
+    real (kind=8) :: b_g,a_g,a_s,a_m,b_m,alpha_ag(3),beta_ag(3),alpha_bg(2),beta_bg(2),laB(3)
 	real (kind=8) :: turnAG(3),turnBG(2),p0ref
  
  p0ref=1400.0
