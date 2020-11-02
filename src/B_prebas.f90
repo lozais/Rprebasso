@@ -386,7 +386,7 @@ if (N>0.) then
 	  if(dH == 888.) dN = min(dN,-(0.1*N))
       Vold = V
       Nold = N
-      if(N < 5.) N = 0.0
+      ! if(N < 5.) N = 0.0
 
       N = max(0.0, N + step*dN)
 
