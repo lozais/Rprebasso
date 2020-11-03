@@ -292,6 +292,9 @@ InitMultiSite <- function(nYearsMS,
     multiOut[sitxx,,,i,] <- 0.
   }
   
+  dimnames(multiInitVar) <-  list(site=NULL,
+                                  variable=c("SpeciesID","age","H","D","BA","Hc","Ac"),layer=layerNam)
+  
   multiSiteInit <- list(
     multiOut = multiOut,
     multiEnergyWood = multiEnergyWood,
@@ -391,6 +394,11 @@ multiPrebas <- function(multiSiteInit){
                      GVabgW = as.array(multiSiteInit$GVabgW)
                      )
   class(prebas) <- "multiPrebas"
+  
+  dimnames(prebas$multiOut) <- dimnames(multiSiteInit$multiOut)
+  dimnames(prebas$multiInitVar) <- dimnames(multiSiteInit$multiInitVar)
+  names(prebas$siteInfo) <- names(multiSiteInit$siteInfo)
+  
   return(prebas)
 }
 
@@ -460,6 +468,10 @@ regionPrebas <- function(multiSiteInit,
   }else{
     prebas$totHarv <- colSums(prebas$multiOut[,,37,1,1]*prebas$areas)
   }
+  
+  dimnames(prebas$multiOut) <- dimnames(multiSiteInit$multiOut)
+  dimnames(prebas$multiInitVar) <- dimnames(multiSiteInit$multiInitVar)
+  names(prebas$siteInfo) <- names(multiSiteInit$siteInfo)
   return(prebas)
 }
 
