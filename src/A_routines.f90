@@ -1058,7 +1058,7 @@ end subroutine tapioThin
 !  function to calculate fAPAR of ground vegetation
 !***************************************************************
 ! subroutine fAPARgv(fAPARstand,ets,siteType,agW,bgW,fAPAR_gv,litAG,litBG)
-subroutine fAPARgv(fAPARstand,ets,siteType,totfAPAR_gv,totlitGV,p0,bgW,agW) !reduced input output	
+subroutine fAPARgv(fAPARstand,ets,siteType,totfAPAR_gv,totlitGV,p0,litBG,litAG) !reduced input output	
 	implicit none
     real (kind=8) :: fAPARstand,ets,siteType, litAG(3), litBG(2),p0
 	real (kind=8) :: totfAPAR_gv,totlitGV
