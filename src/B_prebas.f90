@@ -38,6 +38,7 @@ implicit none
  real (kind=8) :: prelesOut(16),fAPARsite
  real (kind=8) :: leac=0 !leaching parameter for Yasso
  real (kind=8),DIMENSION(nLayers,5) :: fbAWENH,folAWENH,stAWENH
+ real (kind=8) :: gvAWENH(5)
  real (kind=8),DIMENSION(nLayers) :: Lb,Lf,Lst
 ! real (kind=8),DIMENSION(nLayers) :: speciesIDs
  real (kind=8),DIMENSION(nLayers) :: valX
@@ -557,7 +558,7 @@ if (year <= maxYearSite) then
 		sum(P0yX(:,1))/nYears,GVbgW(year,:),GVabgW(year,:)) !reduced input output
      GVout(year,3) = prelesOut(1) * GVout(year,1)/fAPARsite! Photosynthesis in g C m-2 (converted to kg C m-2)
      GVout(year,4) = GVout(year,3)*0.5 !where to put those two variables
-   	 STAND_all(26,1) = STAND_all(26,1) + GVout(year,2)	!add !!!ground vegetation to the 1st layer
+   	 ! STAND_all(26,1) = STAND_all(26,1) + GVout(year,2)	!add !!!ground vegetation to the 1st layer
     elseif(fAPARsite==0.) then
 	 call fAPARgv(fAPARsite,ETSmean,siteType,GVout(year,1),GVout(year,2),&
 	 sum(P0yX(:,1))/nYears,GVbgW(year,:),GVabgW(year,:)) !reduced input output
@@ -1437,6 +1438,10 @@ modOut((year+1),9:nVar,:,:) = outt(9:nVar,:,:)
    call compAWENH(Lf(ijj),folAWENH(ijj,:),pAWEN(1:4,species))   !!!awen partitioning foliage
    call compAWENH(Lb(ijj),fbAWENH(ijj,:),pAWEN(5:8,species))   !!!awen partitioning branches
    call compAWENH(Lst(ijj),stAWENH(ijj,:),pAWEN(9:12,species))         !!!awen partitioning stems
+   if(GVrun==1 .and. ijj==1) then 
+    call compAWENH(GVout(year,2),gvAWENH,pAWEN(1:4,1))   !!!awen partitioning ground vegetation for now I'm usingPine parameters
+	folAWENH(ijj,:) = folAWENH(ijj,:) + gvAWENH			 !!!add AWEN gv to 1st layer
+   endif
    call mod5c(pYasso,t,weatherYasso(year,:),soilC((year),:,1,ijj),stAWENH(ijj,:),litterSize(1,species), &
 	leac,soilC((year+1),:,1,ijj),0.)
    call mod5c(pYasso,t,weatherYasso(year,:),soilC((year),:,2,ijj),fbAWENH(ijj,:),litterSize(2,species), &
