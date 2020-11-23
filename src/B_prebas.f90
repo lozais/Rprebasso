@@ -1428,7 +1428,7 @@ modOut((year+1),9:nVar,:,:) = outt(9:nVar,:,:)
 !!!!run Yasso
  if(yassoRun==1.) then
 
-   do ijj = 1, nLayers
+  do ijj = 1, nLayers
    Lst(ijj) = outt(29,ijj,1)
    Lb(ijj) =  outt(28,ijj,1)
    Lf(ijj) = outt(26,ijj,1)+outt(27,ijj,1)
