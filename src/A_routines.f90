@@ -1058,13 +1058,15 @@ end subroutine tapioThin
 !  function to calculate fAPAR of ground vegetation
 !***************************************************************
 ! subroutine fAPARgv(fAPARstand,ets,siteType,agW,bgW,fAPAR_gv,litAG,litBG)
-subroutine fAPARgv(fAPARstand,ets,siteType,totfAPAR_gv,totlitGV,p0) !reduced input output	
+subroutine fAPARgv(fAPARstand,ets,siteType,totfAPAR_gv,totlitGV,p0,AWENs) !reduced input output	
 	implicit none
     real (kind=8) :: fAPARstand,ets,siteType, litAG(3), litBG(2),p0
 	real (kind=8) :: totfAPAR_gv,totlitGV
 	real (kind=8) :: bgW(2),agW(3), xx(3),lai_gv(3),fAPAR_gv(3)!x_g, x_s, x_m !%cover grass&herbs, shrubs and mosses&lichens
     real (kind=8) :: b_g,a_g,a_s,a_m,b_m,alpha_ag(3),beta_ag(3),alpha_bg(2),beta_bg(2),laB(3)
 	real (kind=8) :: turnAG(3),turnBG(2),p0ref
+	real (kind=8) :: AWENs(4), AWENsh(4), AWENghAG(4), AWENml(4), AWENghBG(4)
+ 
  
  p0ref=1400.0
  !!!set parameters %cover
@@ -1094,6 +1096,11 @@ subroutine fAPARgv(fAPARstand,ets,siteType,totfAPAR_gv,totlitGV,p0) !reduced inp
  laB = (/6.,7.,1./)
  turnAG = (/0.37,0.54,0.2/) !!!turnovers above ground srbs,g&h, m&l
  turnBG = (/0.08,0.59/) !!!turnovers below ground srbs,g&h, m&l
+ 
+ AWENsh = (/0.557,0.225264,0.086736,0.131/) !!!!Awen parameters for shrubs
+ AWENghAG = (/0.273,0.427518,0.274482,0.025/) !!!!Awen parameters for grass&herbs aboveground
+ AWENghBG = (/0.273,0.506844,0.195156,0.025/) !!!!Awen parameters for grass&herbs belowground
+ AWENml = (/0.786,0.088445,0.034055,0.0915/) !!!!Awen parameters for lichens and mosses
 
  !% cover calculations
  if(fAPARstand==0.) then
@@ -1113,6 +1120,9 @@ subroutine fAPARgv(fAPARstand,ets,siteType,totfAPAR_gv,totlitGV,p0) !reduced inp
  !! calculate litterfal
  litAG = agW * turnAG
  litBG = bgW * turnBG
+ !! calculate AWEN
+ AWENs =  litAG(1) * AWENsh + litAG(2)*AWENghAG + litAG(3) * AWENml + &
+	litBG(1)*AWENsh + litBG(2) *AWENghBG
  
  ! !calculate LAI
  lai_gv = agW * laB / 10000 * 0.5   !!!!0.5 converts DW to carbon

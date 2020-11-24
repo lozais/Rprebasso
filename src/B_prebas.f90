@@ -37,7 +37,7 @@ implicit none
  real (kind=8) :: prelesOut(16),fAPARsite
  real (kind=8) :: leac=0 !leaching parameter for Yasso
  real (kind=8),DIMENSION(nLayers,5) :: fbAWENH,folAWENH,stAWENH
- real (kind=8) :: gvAWENH(5)
+ real (kind=8) :: AWENgv(4)
  real (kind=8),DIMENSION(nLayers) :: Lb,Lf,Lst
 ! real (kind=8),DIMENSION(nLayers) :: speciesIDs
  real (kind=8),DIMENSION(nLayers) :: valX
@@ -553,12 +553,12 @@ if (year <= maxYearSite) then
    !!!fapar_gv compute fapar, biomasses and litter of gv with routine
    if(gvRun==1) then
 	if(fAPARsite>0.) then
-     call fAPARgv(fAPARsite,ETSmean,siteType,GVout(year,1),GVout(year,2),sum(P0yX(:,1))/nYears) !reduced input output
+     call fAPARgv(fAPARsite,ETSmean,siteType,GVout(year,1),GVout(year,2),sum(P0yX(:,1))/nYears,AWENgv) !reduced input output
      GVout(year,3) = prelesOut(1) * GVout(year,1)/fAPARsite! Photosynthesis in g C m-2 (converted to kg C m-2)
      GVout(year,4) = GVout(year,3)*0.5 !where to put those two variables
    	 ! STAND_all(26,1) = STAND_all(26,1) + GVout(year,2)	!add !!!ground vegetation to the 1st layer
     elseif(fAPARsite==0.) then
-	 call fAPARgv(fAPARsite,ETSmean,siteType,GVout(year,1),GVout(year,2),sum(P0yX(:,1))/nYears) !reduced input output
+	 call fAPARgv(fAPARsite,ETSmean,siteType,GVout(year,1),GVout(year,2),sum(P0yX(:,1))/nYears,AWENgv) !reduced input output
      fAPARprel(:) = fAPARsite + GVout(year,1)
     !!!fapar_gv run preles for ground vegetation
      call preles(weatherPRELES(year,:,:),DOY,fAPARprel,prelesOut, pars, &
@@ -1435,8 +1435,7 @@ modOut((year+1),9:nVar,:,:) = outt(9:nVar,:,:)
    species = int(initVar(1,ijj))
    call compAWENH(Lf(ijj),folAWENH(ijj,:),pAWEN(1:4,species))   !!!awen partitioning foliage
    if(GVrun==1 .and. ijj==1) then 
-    call compAWENH(GVout(year,2),gvAWENH,pAWEN(1:4,1))   !!!awen partitioning ground vegetation for now I'm usingPine parameters
-	folAWENH(ijj,:) = folAWENH(ijj,:) + gvAWENH			 !!!add AWEN gv to 1st layer
+    folAWENH(ijj,1:4) = folAWENH(ijj,1:4) + AWENgv			 !!!add AWEN gv to 1st layer
    endif
    call compAWENH(Lb(ijj),fbAWENH(ijj,:),pAWEN(5:8,species))   !!!awen partitioning branches
    call compAWENH(Lst(ijj),stAWENH(ijj,:),pAWEN(9:12,species))         !!!awen partitioning stems
