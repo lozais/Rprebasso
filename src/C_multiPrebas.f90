@@ -29,7 +29,7 @@ integer, intent(in) :: nYears(nSites),nLayers(nSites)
  real (kind=8), intent(in) :: inDclct(nSites,allSP),inAclct(nSites,allSP),energyCuts(nSites)	!!energCuts
 !!!ground vegetation
  integer, intent(in) :: gvRun			!!!ground vegetation
- real (kind=8), intent(inout) :: GVout(nSites,maxYears,4) !fAPAR_gv,litGV,photoGV,respGV			!!!ground vegetation
+ real (kind=8), intent(inout) :: GVout(nSites,maxYears,3) !fAPAR_gv,litGV,photoGV,respGV			!!!ground vegetation
  integer, intent(inout) :: nThinning(nSites)
  real (kind=8), intent(inout) :: fAPAR(nSites,maxYears)
  real (kind=8), intent(inout) :: initVar(nSites,7,maxNlayers),P0y(nClimID,maxYears,2),ETSy(nClimID,maxYears)!,par_common

@@ -27,7 +27,7 @@ implicit none
  integer, intent(inout) :: nThinning
 !!!ground vegetation variables
  integer, intent(in) :: gvRun			!!!ground vegetation
- real (kind=8), intent(inout) :: fAPAR(nYears),GVout(nYears,4) !fAPAR_gv,litGV,photoGV,respGV			!!!ground vegetation
+ real (kind=8), intent(inout) :: fAPAR(nYears),GVout(nYears,3) !fAPAR_gv,litGV,photoGV,respGV			!!!ground vegetation
  real (kind=8), intent(inout) :: dailyPRELES((nYears*365),3)
  real (kind=8), intent(inout) :: initVar(7,nLayers),P0y(nYears,2),ETSy(nYears),initCLcutRatio(nLayers)!
  real (kind=8), intent(inout) :: siteInfo(10)
@@ -554,12 +554,12 @@ if (year <= maxYearSite) then
    if(gvRun==1) then
 	if(fAPARsite>0.) then
      call fAPARgv(fAPARsite,ETSmean,siteType,GVout(year,1),GVout(year,2),sum(P0yX(:,1))/nYears,AWENgv) !reduced input output
-     GVout(year,3) = prelesOut(1) * GVout(year,1)/fAPARsite! Photosynthesis in g C m-2 (converted to kg C m-2)
-     GVout(year,4) = GVout(year,3)*0.5 !where to put those two variables
+     GVout(year,3) = prelesOut(1) * GVout(year,1)/fAPARsite! Photosynthesis in g C m-2 
+     ! GVout(year,4) = GVout(year,3)*0.5 !where to put those two variables
    	 ! STAND_all(26,1) = STAND_all(26,1) + GVout(year,2)	!add !!!ground vegetation to the 1st layer
     elseif(fAPARsite==0.) then
 	 call fAPARgv(fAPARsite,ETSmean,siteType,GVout(year,1),GVout(year,2),sum(P0yX(:,1))/nYears,AWENgv) !reduced input output
-     fAPARprel(:) = fAPARsite + GVout(year,1)
+     fAPARprel(:) = GVout(year,1)
     !!!fapar_gv run preles for ground vegetation
      call preles(weatherPRELES(year,:,:),DOY,fAPARprel,prelesOut, pars, &
 		dailyPRELES((1+((year-1)*365)):(365*year),1), &  !daily GPP
@@ -567,7 +567,7 @@ if (year <= maxYearSite) then
 		dailyPRELES((1+((year-1)*365)):(365*year),3), &  !daily SW
 		etmodel)		!type of ET model
       GVout(year,3) = prelesOut(1) ! Photosynthesis in g C m-2 
-      GVout(year,4) =  GVout(year,3)*0.5 
+      ! GVout(year,4) =  GVout(year,3)*0.5 
 	endif
    endif
 
@@ -926,7 +926,7 @@ else
   STAND(2) = 0. !!newX
   STAND(8:21) = 0. !#!#
   STAND(23:37) = 0. !#!#
-  if(fAPARsite==0. .and. ij==1) STAND(26) = GVout(year,2)
+  ! if(fAPARsite==0. .and. ij==1) STAND(26) = GVout(year,2)
   STAND(42:44) = 0. !#!#
   STAND(47:nVar) = 0. !#!#
   STAND(7) = STAND(7) + step
@@ -1488,6 +1488,7 @@ enddo
 
 modOut(:,46,:,1) = modOut(:,44,:,1) - modOut(:,9,:,1) - modOut(:,45,:,1) !!Gpp is not smoothed
 !modOut(:,46,:,1) = modOut(:,18,:,1) - modOut(:,45,:,1) !!!everything smoothed
+
 !!!!ground vegetation Add Npp ground vegetation to the NEE first layer
 if(GVrun==1) modOut(2:(nYears+1),46,1,1) = modOut(2:(nYears+1),46,1,1) + GVout(:,3)*0.5 
 
