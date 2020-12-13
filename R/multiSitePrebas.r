@@ -294,6 +294,9 @@ InitMultiSite <- function(nYearsMS,
   dimnames(multiInitVar) <-  list(site=NULL,
               variable=c("SpeciesID","age","H","D","BA","Hc","Ac"),layer=layerNam)
 
+  # set minimum age to 1 y
+  multiInitVar[,2,][which(multiInitVar[,2,]<1)] <- 1
+  
   multiSiteInit <- list(
     multiOut = multiOut,
     multiEnergyWood = multiEnergyWood,
