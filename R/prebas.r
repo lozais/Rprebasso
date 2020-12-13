@@ -208,7 +208,7 @@ prebas <- function(nYears,
                      yassoRun=as.double(yassoRun),
                      energyWood = as.array(energyWood),
                      tapioPars = as.array(tapioPars),
-                     GVout = matrix(0,nYears,4),
+                     GVout = matrix(0,nYears,3),
                      GVrun = as.integer(GVrun))
   class(prebas) <- "prebas"
   return(prebas)

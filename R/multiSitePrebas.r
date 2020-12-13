@@ -339,7 +339,7 @@ InitMultiSite <- function(nYearsMS,
     smoothETS = smoothETS,
     tapioPars=tapioPars,
     GVrun=as.integer(GVrun),
-    GVout=array(0.,dim = c(nSites,maxYears,4))
+    GVout=array(0.,dim = c(nSites,maxYears,3))
   )
   return(multiSiteInit)
 }
