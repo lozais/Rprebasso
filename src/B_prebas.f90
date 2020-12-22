@@ -950,16 +950,16 @@ endif
   !energyCut
 	 S_fol = wf_STKG + S_fol
      S_fr = W_froot + S_fr
-	if(energyCut==1.) then
-	 energyWood(year,ij,2) = (W_branch + W_croot*0.3 + W_stem* (1-harvRatio)) * energyRatio
-	 energyWood(year,ij,1) = energyWood(year,ij,2) / par_rhow
-     S_branch = W_branch * (1-energyRatio) + W_croot*0.7 + S_branch
-     S_wood = S_wood + W_stem* (1-harvRatio)* (1-energyRatio) + &
-			W_croot*0.3 * (1-energyRatio)!(1-harvRatio) takes into account of the stem residuals after thinnings
-	else
-     S_branch = W_branch + W_croot*0.7 + S_branch
-     S_wood = S_wood + W_stem* (1-harvRatio) + W_croot*0.3 !(1-harvRatio) takes into account of the stem residuals after thinnings
-	endif
+		if(energyCut==1.) then
+		 energyWood(year,ij,2) = (W_branch + W_croot*0.3 + W_stem* (1-harvRatio)) * energyRatio
+		 energyWood(year,ij,1) = energyWood(year,ij,2) / par_rhow
+		 S_branch = W_branch * (1-energyRatio) + W_croot*0.7 + S_branch
+		 S_wood = S_wood + W_stem* (1-harvRatio)* (1-energyRatio) + &
+				W_croot*0.3 * (1-energyRatio)!(1-harvRatio) takes into account of the stem residuals after thinnings
+		else
+		 S_branch = W_branch + W_croot*0.7 + S_branch
+		 S_wood = S_wood + W_stem* (1-harvRatio) + W_croot*0.3 !(1-harvRatio) takes into account of the stem residuals after thinnings
+		endif
   !energyCut
      STAND(26) = S_fol
      STAND(27) = S_fr
@@ -967,18 +967,18 @@ endif
      STAND(29) = S_wood
     else
      if(thinning(countThinning,8)==1.) then
-	if(thinning(countThinning,4) < 2. .and. thinning(countThinning,4) > 0.) then
-	 thinning(countThinning,4) = H * thinning(countThinning,4)
-	endif
-	if(thinning(countThinning,5) < 2. .and. thinning(countThinning,5) > 0.) then
-	 thinning(countThinning,5) = D * thinning(countThinning,5)
-	endif
-	if(thinning(countThinning,6) < 1. .and. thinning(countThinning,6) > 0.) then
-	 thinning(countThinning,6) = BA * thinning(countThinning,6)
-	endif
-	if(thinning(countThinning,7) < 2. .and. thinning(countThinning,7) > 0.) then
-	 thinning(countThinning,7) = Hc * thinning(countThinning,7)
-	endif
+		if(thinning(countThinning,4) < 2. .and. thinning(countThinning,4) > 0.) then
+		 thinning(countThinning,4) = H * thinning(countThinning,4)
+		endif
+		if(thinning(countThinning,5) < 2. .and. thinning(countThinning,5) > 0.) then
+		 thinning(countThinning,5) = D * thinning(countThinning,5)
+		endif
+		if(thinning(countThinning,6) < 1. .and. thinning(countThinning,6) > 0.) then
+		 thinning(countThinning,6) = BA * thinning(countThinning,6)
+		endif
+		if(thinning(countThinning,7) < 2. .and. thinning(countThinning,7) > 0.) then
+		 thinning(countThinning,7) = Hc * thinning(countThinning,7)
+		endif
      endif
      if (thinning(countThinning,4) /= -999.) H = thinning(countThinning,4)
      if (thinning(countThinning,7) /= -999.) stand(14) = thinning(countThinning,7)
