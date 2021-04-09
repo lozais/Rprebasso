@@ -1598,7 +1598,6 @@ END SUBROUTINE runYassoMonthly
       data alpha_d,D13_d,k_mort1,k_mort2/2.3,210.,0.005,0.3/
       data delta1,delta2/30000.,2000./
 
-
       Diam = sqrt(1.2732 * BA(ind)) 
 
       if(Diam>0.) then
@@ -1699,6 +1698,5 @@ END SUBROUTINE runYassoMonthly
           
           dN(ind) = 0.
       endif
-      
 end subroutine Fmortality
 

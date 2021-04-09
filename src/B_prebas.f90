@@ -396,7 +396,7 @@ if (N>0.) then
            dN = 0.
       endif
 	  if(mort == 888.) then !!!888. indicates that thereis not growth in the layer
-		dN = min(dN,-(0.03*N)) !!!!reduce try density of 3% if there is no growth
+		dN = 0.!min(dN,-(0.03*N)) !!!!reduce try density of 3% if there is no growth
 		mort=0.
 		stand(40) = 0.
 	  endif
@@ -1135,7 +1135,6 @@ hm2 = STAND_all(11,:)
 dNm2 = 0.
 dBAm2 = 0.
 rfm2 = 0.
-
 do ij = 1 , nLayers 		!loop Layer
 
  STAND=STAND_all(:,ij)
@@ -1219,17 +1218,18 @@ if (N>0.) then
   ! par_ksi = wf_treeKG / (Lc ** par_z)
   wf_STKG = wf_treeKG * N !needle mass per STAND in units C
   ppow=1.6075
-
 ! Mortality - use Mikko's model
-     if(time==inttimes) then
+     ! if(time==inttimes) then
 	  call FMortality(D13m2, BAm2, Nm2, hm2, dNm2, dBAm2,rfm2, nLayers, ij)
-      dN = dNm2(ij)
+      ! write(2,*) dNm2
+	  dN = dNm2(ij)
+	  ! write(1,*) dN
       Vold = V
       Nold = N
       ! if(N < 5.) N = 0.0
 
       N = max(0.0, N + step*dN)
-
+      ! write(3,*) N,step,step*dN
 	  if (dN<0. .and. Nold>0.) then
 			W_wsap = stand(47)
 			W_froot = stand(25)
@@ -1287,7 +1287,17 @@ if (N>0.) then
 				exp(-exp(pCrobas(35,species) + pCrobas(36,species)*ijj + pCrobas(37,species)*D + 0.))
 		enddo
 	  end if
-	 endif
+	 ! endif
+  ! STAND(11) = H
+  ! STAND(12) = D
+  STAND(13) = BA ! * par_ops2
+  ! STAND(14) = Hc
+  ! STAND(15) = Cw
+  STAND(17) = N
+  STAND(33) = wf_STKG
+  STAND(34) = wf_treeKG
+  STAND(35) = B
+  STAND(30) = V
 endif
   STAND_all(:,ij)=STAND
 end do !!!!!!!end loop layers
