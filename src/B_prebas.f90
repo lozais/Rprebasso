@@ -291,7 +291,7 @@ do year = 1, (nYears)
 	enddo
  endif
 
-do ij = 1 , nLayers 		!loop Species
+do ij = 1 , nLayers 		!loop Layer
 
  STAND=STAND_all(:,ij)
  species = int(stand(4))
@@ -392,7 +392,7 @@ if (N>0.) then
       else
            dN = 0.
       endif
-	  if(mort == 888.) then
+	  if(mort == 888.) then !!!888. indicates that thereis not growth in the layer
 		dN = min(dN,-(0.03*N)) !!!!reduce try density of 3% if there is no growth
 		mort=0.
 		stand(40) = 0.
@@ -1122,7 +1122,7 @@ endif
 
 	STAND_all(:,ij)=STAND
 end do !!!!end loop species
- end do !!!!end loop inttimes
+ end do !!!!end loop year
 
 !Perform thinning or defoliation events for this time period using standard management routines!!!!!!!!!!!!!!!!
 !do siteNo = 1, nSites
