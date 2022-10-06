@@ -22,13 +22,14 @@ calBioIndices <- function(modOut){
     Pdec = Vdec / Vtot *100; Pdec[which(is.na(Pdec))]=0
     ageoldest = apply(modOut$multiOut[,,7,,1],1:2,max,na.rm=T)
     Nstems = apply(modOut$multiOut[,,17,,1],1:2,sum,na.rm=T)
-    BAtot = apply(modOut$multiOut[,,13,,1],1:2,sum,na.rm=T) 
-    BAdec = apply(modOut$multiOut,1:2,calBAspec,speciesID=3)
+    BAtot = apply(modOut$multiOut[,,13,,1],1:2,sum,na.rm=T)
+    BAtotD = apply(modOut$multiOut[,,51,,1],1:2,sum,na.rm=T)
+    BAdecD = apply(modOut$multiOut,1:2,calBADspec,speciesID=3)
     ###Computing the indices
     HSIcaperRun <- matrix(mapply(HSIcaper,Vpine,Vspruce,Nstems),modOut$nSites,modOut$nYears)
     HSIhgRun <- matrix(mapply(HSIhg,ageoldest,Pdec,Pspruce),modOut$nSites,modOut$nYears)
-    HSIttwoRun <- matrix(mapply(HSIttwo,BAtot,Vtot),modOut$nSites,modOut$nYears)
-    HSIlswoRun <- matrix(mapply(HSIlswo,BAdec,ageoldest),modOut$nSites,modOut$nYears)
+    HSIttwoRun <- matrix(mapply(HSIttwo,BAtotD,Vtot),modOut$nSites,modOut$nYears)
+    HSIlswoRun <- matrix(mapply(HSIlswo,BAdecD,ageoldest),modOut$nSites,modOut$nYears)
     HSIlttRun <- matrix(mapply(HSIltt,ageoldest,BAtot,Pdec),modOut$nSites,modOut$nYears)
     HSIfsRun <- matrix(mapply(HSIfs,Vspruce,Pspruce,Vdec),modOut$nSites,modOut$nYears)
     #resource availability is not still implemented
@@ -47,12 +48,13 @@ calBioIndices <- function(modOut){
     Pspruce[which(is.na(Pspruce))] <- 0
     Pdec[which(is.na(Pdec))] <- 0
     Nstems = apply(PREBASout$output[,17,,1],1,sum,na.rm=T)
-    BAtot = apply(PREBASout$output[,13,,1],1,sum,na.rm=T) 
-    BAdec = apply(PREBASout$output,1,calBAspec,speciesID=3)
+    BAtot = apply(PREBASout$output[,13,,1],1,sum,na.rm=T)
+    BAtotD = apply(modOut$multiOut[,,51,,1],1:2,sum,na.rm=T)
+    BAdecD = apply(PREBASout$output,1,calBADspec,speciesID=3)
     HSIcaperRun <- mapply(HSIcaper,Vpine,Vspruce,Nstems)
     HSIhgRun <- mapply(HSIhg,ageoldest,Pdec,Pspruce)
-    HSIttwoRun <- mapply(HSIttwo,BAtot,Vtot)
-    HSIlswoRun <- mapply(HSIlswo,BAdec,ageoldest)
+    HSIttwoRun <- mapply(HSIttwo,BAtotD,Vtot)
+    HSIlswoRun <- mapply(HSIlswo,BAdecD,ageoldest)
     HSIlttRun <- mapply(HSIltt,ageoldest,BAtot,Pdec)
     HSIfsRun <- mapply(HSIfs,Vspruce,Pspruce,Vdec)
     #resource availability is not still implemented
